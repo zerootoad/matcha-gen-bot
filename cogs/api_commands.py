@@ -227,7 +227,7 @@ class ApiUtilities(commands.Cog):
             try:
                 view = FeedbackView(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping", best_ping, ai, interaction.user.id)
                 
-                file_name = f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg" if config_name is None else config_name.lower()
+                file_name = f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg" if config_name is None else f"{config_name.lower()}.cfg"
                 with open(file_path, 'rb') as file:
                     embed = discord.Embed(title="`🎀` **User Configuration**", description=f"Here's your **{mode.lower()}** generated configuration for **{ping_min}-{ping_max}** ping range", color=0xFF88CF)
                     embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
@@ -240,7 +240,7 @@ class ApiUtilities(commands.Cog):
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await message.edit(embed=embed)
                 return
-            finally:                    
+            else:                    
                 embed = discord.Embed(title="`🎀` **Config Sent**", description=f"Your configuration has been sent in our DMs!", color=0xFF88CF)
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await message.edit(embed=embed)
@@ -268,7 +268,7 @@ class ApiUtilities(commands.Cog):
             try:
                 view = FeedbackView(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping", ping, ai, interaction.user.id)
                 
-                file_name = f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg" if config_name is None else config_name.lower()
+                file_name = f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping.cfg" if config_name is None else f"{config_name.lower()}.cfg"
                 with open(file_path, 'rb') as file:
                     embed = discord.Embed(title="`🎀` **User Configuration**", description=f"Here's your **{mode.lower()}** generated configuration for **{ping}** ping", color=0xFF88CF)
                     embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
@@ -281,7 +281,7 @@ class ApiUtilities(commands.Cog):
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await message.edit(embed=embed)
                 return
-            finally:                    
+            else:                    
                 embed = discord.Embed(title="`🎀` **Config Sent**", description=f"Your configuration has been sent in our DMs!", color=0xFF88CF)
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await message.edit(embed=embed)

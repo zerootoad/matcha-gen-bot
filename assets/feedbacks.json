@@ -1,3 +1,10 @@
 {
-
+    "math_paid_none_50ping": [
+        {
+            "user_id": 1069299294324133918,
+            "ping": 50,
+            "ai": false,
+            "feedback": "slaps"
+        }
+    ]
 }
