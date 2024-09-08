@@ -26,12 +26,13 @@ class ConfigHandler:
         config_data['prediction_y'] = float(prediction_y)
         
         if smoothness > 0:
+            config_data['aimtype'] = 0
             config_data['smoothness_x'] = smoothness
             config_data['smoothness_y'] = smoothness
             config_data['smoothness'] = True
         else:
-            config_data['smoothness_x'] = 0
-            config_data['smoothness_y'] = 0
+            config_data['smoothness_x'] = 1
+            config_data['smoothness_y'] = 1
             config_data['smoothness'] = False
         
         config_data['sensitivity'] = sensitivity

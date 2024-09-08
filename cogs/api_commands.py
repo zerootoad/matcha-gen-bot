@@ -218,7 +218,7 @@ class ApiUtilities(commands.Cog):
                 return
             
             if "error" in xy_dict:
-                embed = discord.Embed(title="`❌` **Unexpected Error**", description=f"Bot has run into an exception when generating configs, send the error message below to one of the developers\n> ```{xy_dict["error"]}```", color=0xFF474C)
+                embed = discord.Embed(title="`❌` **Unexpected Error**", description=f"Bot has run into an exception when generating configs, send the error message below to one of the developers\n> ```{xy_dict['error']}```", color=0xFF474C)
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await interaction.respond(embed=embed, ephemeral=True)
                 return
@@ -227,14 +227,14 @@ class ApiUtilities(commands.Cog):
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             message = await interaction.respond(embed=embed)
             
-            file_path = self.config.generate_cfg_file(f"{"ai" if ai else "math"}_paid_{mode.lower()}_{ping_min}-{ping_max}ping", xy_dict["x"], xy_dict["y"], smooth, sens)
+            file_path = self.config.generate_cfg_file(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping", xy_dict['x'], xy_dict['y'], smooth, sens)
             try:
-                view = FeedbackView(f"{"ai" if ai else "math"}_paid_{mode.lower()}_{ping_min}-{ping_max}ping", best_ping, ai, interaction.user.id)
+                view = FeedbackView(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping", best_ping, ai, interaction.user.id)
                 
                 with open(file_path, 'rb') as file:
                     embed = discord.Embed(title="`🎀` **User Configuration**", description=f"Here's your **{mode.lower()}** generated configuration for **{ping_min}-{ping_max}** ping range", color=0xFF88CF)
                     embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
-                    await interaction.user.send(embed=embed, file=discord.File(file, f"{"ai" if ai else "math"}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg"), view=view)
+                    await interaction.user.send(embed=embed, file=discord.File(file, f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg"), view=view)
             except Exception as e:
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -257,7 +257,7 @@ class ApiUtilities(commands.Cog):
                 return
             
             if "error" in xy_dict:
-                embed = discord.Embed(title="`❌` **Unexpected Error**", description=f"Bot has run into an exception when generating configs, send the error message below to one of the developers\n> ```{xy_dict["error"]}```", color=0xFF474C)
+                embed = discord.Embed(title="`❌` **Unexpected Error**", description=f"Bot has run into an exception when generating configs, send the error message below to one of the developers\n> ```{xy_dict['error']}```", color=0xFF474C)
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await interaction.respond(embed=embed, ephemeral=True)
                 return
@@ -266,15 +266,15 @@ class ApiUtilities(commands.Cog):
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             message = await interaction.respond(embed=embed)
             
-            file_path = self.config.generate_cfg_file(f"{"ai" if ai else "math"}_paid_{mode.lower()}_{ping}ping", xy_dict["x"], xy_dict["y"], smooth, sens)
+            file_path = self.config.generate_cfg_file(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping", xy_dict['x'], xy_dict['y'], smooth, sens)
             
             try:
-                view = FeedbackView(f"{"ai" if ai else "math"}_paid_{mode.lower()}_{ping}ping", ping, ai, interaction.user.id)
+                view = FeedbackView(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping", ping, ai, interaction.user.id)
                 
                 with open(file_path, 'rb') as file:
                     embed = discord.Embed(title="`🎀` **User Configuration**", description=f"Here's your **{mode.lower()}** generated configuration for **{ping}** ping", color=0xFF88CF)
                     embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
-                    await interaction.user.send(embed=embed, file=discord.File(file, f"{"ai" if ai else "math"}_paid_{mode.lower()}_{ping}ping.cfg"), view=view)
+                    await interaction.user.send(embed=embed, file=discord.File(file, f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping.cfg"), view=view)
             except Exception as e:
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -343,7 +343,7 @@ class ApiUtilities(commands.Cog):
         embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
         message = await interaction.respond(embed=embed)
         
-        file_path = self.config.generate_cfg_file(interaction.user.id, xy_dict["x"], xy_dict["y"], smooth, sens)
+        file_path = self.config.generate_cfg_file(interaction.user.id, xy_dict['x'], xy_dict['y'], smooth, sens)
         try:
             view = FeedbackView(f"free_{mode.lower()}_{ping}ping", ping, False, interaction.user.id)
             

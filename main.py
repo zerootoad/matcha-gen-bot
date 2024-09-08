@@ -4,8 +4,8 @@ current_dir = os.path.dirname(__file__)
 with open(os.path.join(current_dir, 'settings', 'config.json'), 'r', encoding='utf-8') as f:
     settings = json.load(f)
     
-TOKEN = settings["token"]
-guild_id = settings["guild"]
+TOKEN = settings['token']
+guild_id = settings['guild']
 
 bot = discord.Bot(intents=discord.Intents.all(), debug_guilds=[guild_id], auto_sync_commands=True)
 
