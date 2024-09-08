@@ -54,11 +54,8 @@ class FeedbackModal(Modal):
                 data[self.config_name] = []
 
             data[self.config_name].append(feedback)
-            with open(self.feedbacks_file, 'r+') as f:
-                existing_data = json.load(f)
-                existing_data.update(data)
-                f.seek(0)
-                json.dump(existing_data, f, indent=4)
+            with open(self.feedbacks_file, 'w') as f:
+                json.dump(data, f, indent=4)
 
         except Exception as e:
             print(f"Error logging feedback: {str(e)}")
@@ -93,24 +90,21 @@ class ApiUtilities(commands.Cog):
     
     def log_config(self, config_type: str, is_ai: bool):
         try:
+            default_data = {
+                "paid": 0,
+                "free": 0,
+                "ai": 0,
+                "math": 0
+            }
+
             if os.path.exists(self.log_file):
                 with open(self.log_file, 'r') as f:
                     try:
                         data = json.load(f)
                     except json.JSONDecodeError:
-                        data = {
-                            "paid": 0,
-                            "free": 0,
-                            "ai": 0,
-                            "math": 0
-                        }
+                        data = default_data
             else:
-                data = {
-                    "paid": 0,
-                    "free": 0,
-                    "ai": 0,
-                    "math": 0
-                }
+                data = default_data
 
             if config_type == 'paid':
                 data['paid'] += 1
@@ -122,11 +116,8 @@ class ApiUtilities(commands.Cog):
             else:
                 data['math'] += 1
 
-            with open(self.log_file, 'r+') as f:
-                existing_data = json.load(f)
-                existing_data.update(data)
-                f.seek(0)
-                json.dump(existing_data, f, indent=4)
+            with open(self.log_file, 'w') as f:
+                json.dump(data, f, indent=4)
 
         except Exception as e:
             print(f"Error logging config: {str(e)}")
@@ -138,7 +129,7 @@ class ApiUtilities(commands.Cog):
     @discord.option("ping_range", str, description="Enter a ping range. You must separate them with |, -, or ,.")
     @discord.option("mode", str, description="Enter your preferred mode. (Default: Blatant)", choices=["Blatant", "SemiLegit", "Legit", "Streamable"])
     @discord.option("ai", bool, description="Set to true if you would like to use the new AI feature. (Default: False)")
-    @discord.option("model", str, description="Choose your preferred ai model (Default: Stable).", choices=["Pre-Relase", "Stable"])
+    @discord.option("model", str, description="Choose your preferred ai model. (Default: Stable)", choices=["Pre-Relase", "Stable"])
     async def paid_config(self, interaction, config_name: Optional[str] = None, ping: Optional[int] = None, ping_range: Optional[str] = None, mode: str = "None", ai: Optional[bool] = False, model: str = "Stable"):
         if interaction.guild.get_role(1278945247325327424) not in interaction.user.roles:
             embed = discord.Embed(title="`❌` **Not Eligible**", description=f"You do not have access to use the paid generator, please use `/free-config` instead.", color=0xFF474C)

@@ -82,7 +82,7 @@ class ExtraUtilities(commands.Cog):
         if about == "Generation":
             embed = discord.Embed(title=f"`📊` **Generation Statistics**", color=0x88CFF8)
             embed.add_field(name="Total Generations", value=f"{total_generations}", inline=False)
-            embed.add_field(name=f"Paid Generations: {total_paid_generations}", value=f"> AI Generations: {ai_generations}\n> Math Generations: {math_generations}", inline=False)
+            embed.add_field(name=f"Paid Generations: {total_paid_generations}", value=f"> AI Generations: {ai_generations}\n> Math Generations: {math_generations-total_free_generations}", inline=False)
             embed.add_field(name=f"Free Generations", value=f"{total_free_generations}", inline=True)
             
             await interaction.respond(embed=embed)
