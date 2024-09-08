@@ -80,16 +80,16 @@ class ExtraUtilities(commands.Cog):
                 generation_summary += f"> {'Paid' if is_paid else 'Free'} Generation\n\n"
             
         if about == "Generation":
-            embed = discord.Embed(title=f"`📊` **{'Generation' if about == 'Generation' else 'Feedback'} Statistics**", color=0x88CFF8)
+            embed = discord.Embed(title=f"`📊` **Generation Statistics**", color=0x88CFF8)
             embed.add_field(name="Total Generations", value=f"{total_generations}", inline=False)
             embed.add_field(name=f"Paid Generations: {total_paid_generations}", value=f"> AI Generations: {ai_generations}\n> Math Generations: {math_generations}", inline=False)
             embed.add_field(name=f"Free Generations", value=f"{total_free_generations}", inline=True)
             
             await interaction.respond(embed=embed)
-            await interaction.followup.send(file=discord.File(self.feedbacks_file if about in ['Both', 'Feedback'] else self.log_file, f"{"feedbacks.json" if about in ['Both', 'Feedback'] else "generation_logs.json"}"), ephemeral=True)
+            await interaction.followup.send(file=discord.File(self.log_file, f"generation_logs.json"), ephemeral=True)
         
         elif about == "Feedback":
-            embed = discord.Embed(title=f"`📊` **{'Generation' if about == 'Generation' else 'Feedback'} Statistics**", color=0x88CFF8)
+            embed = discord.Embed(title=f"`📊` **Feedback Statistics**", color=0x88CFF8)
             embed.add_field(name="Total Feedbacks", value=f"{total_feedbacks}", inline=False)
             embed.add_field(name=f"Paid Feedbacks: {paid_feedbacks}", value=f"> AI Feedbacks: {ai_feedbacks}\n> Math Feedbacks: {math_feedbacks}", inline=False)
             embed.add_field(name="Free Feedbacks", value=f"{free_feedbacks}", inline=True)
@@ -97,7 +97,7 @@ class ExtraUtilities(commands.Cog):
             await interaction.respond(embed=embed)
             if generation_summary:
                 await interaction.followup.send("Detailed information on generations:\n" + generation_summary, ephemeral=True)
-            await interaction.followup.send(file=discord.File(self.feedbacks_file if about in ['Both', 'Feedback'] else self.log_file, f"{"feedbacks.json" if about in ['Both', 'Feedback'] else "generation_logs.json"}"), ephemeral=True)
+            await interaction.followup.send(file=discord.File(self.feedbacks_file, f"feedbacks.json"), ephemeral=True)
 
         else:
             embed1 = discord.Embed(title=f"`📊` **Generation Statistics**", color=0x88CFF8)
