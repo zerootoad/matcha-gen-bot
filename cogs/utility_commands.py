@@ -16,7 +16,7 @@ class ExtraUtilities(commands.Cog):
             os.makedirs(self.cfgs_folder)
 
     @commands.slash_command(name="information", description="View generation or feedback statistics.")
-    @discord.option("about", str, description="Choose what you wanna view information about.", choices=["Generation", "Feedback", "Both"])
+    @discord.option("about", str, description="Choose what you wanna view information about. (Default: Both)", choices=["Generation", "Feedback", "Both"])
     async def information(self, interaction, about: str = "Both"):
         if not interaction.user.guild_permissions.administrator:
             embed = discord.Embed(title="`❌` **Not Eligible**", description=f"You do not have access to use this command.", color=0xFF474C)

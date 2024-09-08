@@ -1,4 +1,7 @@
 import discord, json, os
+from flask import Flask
+
+app = Flask(__name__)
 
 current_dir = os.path.dirname(__file__)
 with open(os.path.join(current_dir, 'settings', 'config.json'), 'r', encoding='utf-8') as f:
@@ -6,6 +9,10 @@ with open(os.path.join(current_dir, 'settings', 'config.json'), 'r', encoding='u
     
 TOKEN = settings['token']
 guild_id = settings['guild']
+
+@app.route('/')
+def home():
+    return "Bot is running!"
 
 bot = discord.Bot(intents=discord.Intents.all(), debug_guilds=[guild_id], auto_sync_commands=True)
 
@@ -15,11 +22,15 @@ async def on_connect():
     
     print(f"We have connected as {bot.user} and found {len(bot.all_commands.items())} commands")
         
+        
 if __name__ == '__main__':
     current_dir = os.path.dirname(__file__)
     for filename in os.listdir(os.path.join(current_dir, 'cogs')): 
         if filename.endswith('.py'):
             bot.load_extension(f'cogs.{filename[:-3]}')
             print(f"Loaded Cog: {filename[:-3]}")
+            
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)        
             
     bot.run(TOKEN)

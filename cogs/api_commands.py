@@ -89,6 +89,7 @@ class ApiUtilities(commands.Cog):
         bot_dir = os.path.dirname(current_dir)
         
         self.log_file = os.path.join(bot_dir, 'assets', 'generation_logs.json')
+        self.cfgs_dir = os.path.join(bot_dir, 'assets', 'cfgs')
     
     def log_config(self, config_type: str, is_ai: bool):
         try:
@@ -132,19 +133,30 @@ class ApiUtilities(commands.Cog):
 
     
     @discord.slash_command(name="paid-config", description="Generate a paid configuration for Matcha!")
+    @discord.option("config_name", str, description="Enter your custom config name. (Optional)")
     @discord.option("ping", int, description="Enter your in-game ping here.")
     @discord.option("ping_range", str, description="Enter a ping range. You must separate them with |, -, or ,.")
-    @discord.option("mode", str, description="Enter your preferred mode.", choices=["Blatant", "SemiLegit", "Legit", "Streamable"])
-    @discord.option("smoothness", int, description="Enter your preferred smoothness.")
-    @discord.option("sensitivity", float, description="Enter your preferred sensitivity.")
-    @discord.option("ai", bool, description="Set to true if you would like to use the new AI feature.")
-    @discord.option("model", str, description="Choose your prefered ai model (rage is the most stable).", choices=["Legit", "Rage"])
-    async def paid_config(self, interaction, ping: Optional[int] = None, ping_range: Optional[str] = None, mode: str = "None", smoothness: Optional[int] = 0, sensitivity: Optional[float] = 1, ai: Optional[bool] = False, model: str = "Rage"):
+    @discord.option("mode", str, description="Enter your preferred mode. (Default: Blatant)", choices=["Blatant", "SemiLegit", "Legit", "Streamable"])
+    @discord.option("ai", bool, description="Set to true if you would like to use the new AI feature. (Default: False)")
+    @discord.option("model", str, description="Choose your preferred ai model (Default: Stable).", choices=["Pre-Relase", "Stable"])
+    async def paid_config(self, interaction, config_name: Optional[str] = None, ping: Optional[int] = None, ping_range: Optional[str] = None, mode: str = "None", ai: Optional[bool] = False, model: str = "Stable"):
         if interaction.guild.get_role(1278945247325327424) not in interaction.user.roles:
             embed = discord.Embed(title="`❌` **Not Eligible**", description=f"You do not have access to use the paid generator, please use `/free-config` instead.", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await interaction.respond(embed=embed, ephemeral=True)
-            return 
+            return     
+            
+        template_path = os.path.join(self.cfgs_dir, f'{interaction.user.id}.cfg')
+        if not os.path.exists(template_path):
+            embed = discord.Embed(title="`❓` **Missing Template**", description=f"It seems like you're missing your config template file in our database, make sure to use `/upload [file]`. We will use the default template for this generation!", color=0xFF474C)
+            embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
+            await interaction.respond(embed=embed, ephemeral=True)
+        
+        if ping and ping_range:
+            embed = discord.Embed(title="`❌` **Invalid Format**", description=f"You have selected both \"ping-range\" and \"ping\" options, please select only one", color=0xFF474C)
+            embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
+            await interaction.respond(embed=embed, ephemeral=True)
+            return
             
         if interaction.channel.id != 1278947864390799405:
             embed = discord.Embed(title="`❌` **Invalid Channel**", description=f"We've detected the bot being used in a wrong channel! Please only use the generator in <#1280371830489747519>", color=0xFF474C)
@@ -158,39 +170,32 @@ class ApiUtilities(commands.Cog):
             await interaction.respond(embed=embed, ephemeral=True)
             return
         
-        if not ai and ping and (ping < 10 or ping > 200):
+        if not ai and ping and (ping < 10 or ping > 200) or ping == 0:
             embed = discord.Embed(title="`❌` **Unsupported Ping**", description=f"Our maths option only supports ping through `10 - 200`. We will add more flexibility in v2...", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await interaction.respond(embed=embed, ephemeral=True)
             return
         
-        elif ai and ping and (ping < 1 or ping > 1000):
+        elif ai and ping and (ping < 1 or ping > 1000) or ping == 0:
             embed = discord.Embed(title="`❌` **Unsupported Ping**", description=f"Please enter a valid **playable** ping", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await interaction.respond(embed=embed, ephemeral=True)
             return
         
-        sens = sensitivity
-        smooth = smoothness
-        if smooth == 0 and mode:
-            if mode == "Blatant":
-                smooth = 0
-            elif mode == "SemiLegit":
-                smooth = 3
-            elif mode == "Legit":
-                smooth = 7
-            else:
-                smooth = 13
-        
-        if sens == 1 and mode:
-            if mode == "Blatant":
-                sens = 1
-            elif mode == "SemiLegit":
-                sens = 0.70
-            elif mode == "Legit":
-                sens = 0.40
-            else:
-                sens = 0.20
+        sens = 1
+        smooth = 0
+        if mode == "Blatant":
+            smooth = 0
+            sens = 1
+        elif mode == "SemiLegit":
+            smooth = 3
+            sens = 0.70
+        elif mode == "Legit":
+            smooth = 7
+            sens = 0.40
+        else:
+            smooth = 13
+            sens = 0.20
                 
         if ping_range:
             try:
@@ -201,7 +206,7 @@ class ApiUtilities(commands.Cog):
                 await interaction.respond(embed=embed, ephemeral=True)
                 return
             
-            if ping_min < 1 or ping_max > 1000:
+            if ping_min < 1 or ping_max > 1000 or ping_min == 0:
                 embed = discord.Embed(title="`❌` **Invalid Ping Range**", description="Please enter a valid **playable** ping range.", color=0xFF474C)
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await interaction.respond(embed=embed, ephemeral=True)
@@ -231,10 +236,11 @@ class ApiUtilities(commands.Cog):
             try:
                 view = FeedbackView(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping", best_ping, ai, interaction.user.id)
                 
+                file_name = f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg" if config_name is None else config_name.lower()
                 with open(file_path, 'rb') as file:
                     embed = discord.Embed(title="`🎀` **User Configuration**", description=f"Here's your **{mode.lower()}** generated configuration for **{ping_min}-{ping_max}** ping range", color=0xFF88CF)
                     embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
-                    await interaction.user.send(embed=embed, file=discord.File(file, f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg"), view=view)
+                    await interaction.user.send(embed=embed, file=discord.File(file, file_name), view=view)
             except Exception as e:
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -271,10 +277,11 @@ class ApiUtilities(commands.Cog):
             try:
                 view = FeedbackView(f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping", ping, ai, interaction.user.id)
                 
+                file_name = f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping_min}-{ping_max}ping.cfg" if config_name is None else config_name.lower()
                 with open(file_path, 'rb') as file:
                     embed = discord.Embed(title="`🎀` **User Configuration**", description=f"Here's your **{mode.lower()}** generated configuration for **{ping}** ping", color=0xFF88CF)
                     embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
-                    await interaction.user.send(embed=embed, file=discord.File(file, f"{'ai' if ai else 'math'}_paid_{mode.lower()}_{ping}ping.cfg"), view=view)
+                    await interaction.user.send(embed=embed, file=discord.File(file, file_name), view=view)
             except Exception as e:
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -293,43 +300,35 @@ class ApiUtilities(commands.Cog):
                 
     @discord.slash_command(name="free-config", description="Generate a free configuration for Matcha!")
     @discord.option("ping", int, description="Enter your in-game ping here.")
-    @discord.option("mode", str, description="Enter your preferred mode.", choices=["Blatant", "SemiLegit", "Legit", "Streamable"])
-    @discord.option("smoothness", int, description="Enter your preferred smoothness.")
-    @discord.option("sensitivity", float, description="Enter your preferred sensitivity.")
-    async def free_config(self, interaction, ping: Optional[int] = None, mode: str = "None", smoothness: Optional[int] = 0, sensitivity: Optional[float] = 1):
+    @discord.option("mode", str, description="Enter your preferred mode. (Default: Blatant)", choices=["Blatant", "SemiLegit", "Legit", "Streamable"])
+    async def free_config(self, interaction, ping: int, mode: str = "Blatant"):
         if interaction.channel.id != 1278947864390799405:
             embed = discord.Embed(title="`❌` **Invalid Channel**", description=f"We've detected the bot being used in a wrong channel! Please only use the generator in <#1280371830489747519>", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await interaction.respond(embed=embed, ephemeral=True)
             return
         
-        if ping and (ping < 10 or ping > 200):
+        if ping and (ping < 10 or ping > 200) or ping == 0:
             embed = discord.Embed(title="`❌` **Unsupported Ping**", description=f"Our maths option only supports ping through `10 - 200`. We will add more flexibility in v2...", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await interaction.respond(embed=embed, ephemeral=True)
             return
         
-        sens = sensitivity
-        smooth = smoothness
-        if smooth == 0 and mode:
-            if mode == "Blatant":
-                smooth = 0
-            elif mode == "SemiLegit":
-                smooth = 3
-            elif mode == "Legit":
-                smooth = 7
-            else:
-                smooth = 13
+        sens = 1
+        smooth = 0
+        if mode == "Blatant":
+            smooth = 0
+            sens = 1
+        elif mode == "SemiLegit":
+            smooth = 3
+            sens = 0.70
+        elif mode == "Legit":
+            smooth = 7
+            sens = 0.40
+        else:
+            smooth = 13
+            sens = 0.20
         
-        if sens == 1 and mode:
-            if mode == "Blatant":
-                sens = 1
-            elif mode == "SemiLegit":
-                sens = 0.70
-            elif mode == "Legit":
-                sens = 0.40
-            else:
-                sens = 0.20
                 
         try:
             xy_dict = self.free.calculate(ping)
@@ -343,7 +342,7 @@ class ApiUtilities(commands.Cog):
         embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
         message = await interaction.respond(embed=embed)
         
-        file_path = self.config.generate_cfg_file(interaction.user.id, xy_dict['x'], xy_dict['y'], smooth, sens)
+        file_path = self.config.generate_cfg_file(f"free_{mode.lower()}_{ping}ping", xy_dict['x'], xy_dict['y'], smooth, sens)
         try:
             view = FeedbackView(f"free_{mode.lower()}_{ping}ping", ping, False, interaction.user.id)
             
