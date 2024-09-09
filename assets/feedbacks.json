@@ -1,10 +1,18 @@
 {
-    "math_paid_none_50ping": [
+    "math_paid_none_60ping": [
         {
             "user_id": 1069299294324133918,
-            "ping": 50,
+            "ping": 60,
             "ai": false,
-            "feedback": "slaps"
+            "feedback": "sigma"
+        }
+    ],
+    "ai_paid_semilegit_47-85ping": [
+        {
+            "user_id": 656885911229038610,
+            "ping": 66.0,
+            "ai": true,
+            "feedback": "Works pretty much very nice it only misses when im spiking (and prob because i made it semi) works nicely for me tho"
         }
     ]
 }

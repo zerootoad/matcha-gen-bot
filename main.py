@@ -19,7 +19,7 @@ async def on_connect():
 if __name__ == '__main__':
     current_dir = os.path.dirname(__file__)
     for filename in os.listdir(os.path.join(current_dir, 'cogs')): 
-        if filename.endswith('.py'):
+        if filename.endswith('.py') and filename != "tempCodeRunnerFile.py":
             bot.load_extension(f'cogs.{filename[:-3]}')
             print(f"Loaded Cog: {filename[:-3]}")
     

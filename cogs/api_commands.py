@@ -37,7 +37,17 @@ class FeedbackModal(Modal):
             "feedback": self.children[0].value 
         }
         self._log_feedback(feedback_data)
+                
         await interaction.response.send_message("Thank you for your feedback! It will be used to improve our generator.", ephemeral=True)
+        
+        message = await interaction.channel.fetch_message(interaction.message.id)
+        view = View.from_message(message)
+
+        for item in view.children:
+            if isinstance(item, Button):
+                item.disabled = True
+                
+        await interaction.message.edit(view=view)
 
     def _log_feedback(self, feedback):
         try:
@@ -72,7 +82,7 @@ class FeedbackView(View):
         self.user_id = user_id
 
     @discord.ui.button(label="Provide Feedback", style=ButtonStyle.success, emoji="📝")
-    async def feedback_button(self, button: Button, interaction: Interaction):
+    async def feedback_button(self, button: Button, interaction: Interaction):        
         await interaction.response.send_modal(FeedbackModal(self.config_name, self.ping, self.ai, self.user_id))
 
 class ApiUtilities(commands.Cog):
@@ -131,17 +141,13 @@ class ApiUtilities(commands.Cog):
     @discord.option("ai", bool, description="Set to true if you would like to use the new AI feature. (Default: False)")
     @discord.option("model", str, description="Choose your preferred ai model. (Default: Stable)", choices=["Pre-Relase", "Stable"])
     async def paid_config(self, interaction, config_name: Optional[str] = None, ping: Optional[int] = None, ping_range: Optional[str] = None, mode: str = "None", ai: Optional[bool] = False, model: str = "Stable"):
+
+        
         if interaction.guild.get_role(1278945247325327424) not in interaction.user.roles:
             embed = discord.Embed(title="`❌` **Not Eligible**", description=f"You do not have access to use the paid generator, please use `/free-config` instead.", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await interaction.respond(embed=embed, ephemeral=True)
             return     
-            
-        template_path = os.path.join(self.cfgs_dir, f'{interaction.user.id}.cfg')
-        if not os.path.exists(template_path):
-            embed = discord.Embed(title="`❓` **Missing Template**", description=f"It seems like you're missing your config template file in our database, make sure to use `/upload [file]`. We will use the default template for this generation!", color=0xFF474C)
-            embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
-            await interaction.respond(embed=embed, ephemeral=True)
         
         if ping and ping_range:
             embed = discord.Embed(title="`❌` **Invalid Format**", description=f"You have selected both \"ping-range\" and \"ping\" options, please select only one", color=0xFF474C)
@@ -286,6 +292,12 @@ class ApiUtilities(commands.Cog):
                 embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
                 await message.edit(embed=embed)
                 
+        template_path = os.path.join(self.cfgs_dir, f'{interaction.user.id}.cfg')
+        if not os.path.exists(template_path):
+            embed = discord.Embed(title="`❓` **Missing Template**", description=f"It seems like you're missing your config template file in our database, make sure to use `/upload [file]`. We will use the default template for this generation!", color=0xFF474C)
+            embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
+            await interaction.followup.send(embed=embed, ephemeral=True)                
+          
         self.log_config("paid", ai)
                 
                 
@@ -293,6 +305,8 @@ class ApiUtilities(commands.Cog):
     @discord.option("ping", int, description="Enter your in-game ping here.")
     @discord.option("mode", str, description="Enter your preferred mode. (Default: Blatant)", choices=["Blatant", "SemiLegit", "Legit", "Streamable"])
     async def free_config(self, interaction, ping: int, mode: str = "Blatant"):
+
+        
         if interaction.channel.id != 1278947864390799405:
             embed = discord.Embed(title="`❌` **Invalid Channel**", description=f"We've detected the bot being used in a wrong channel! Please only use the generator in <#1280371830489747519>", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
@@ -353,6 +367,12 @@ class ApiUtilities(commands.Cog):
             embed = discord.Embed(title="`🎀` **Config Sent**", description=f"Your configuration has been sent in our DMs!", color=0xFF88CF)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
             await message.edit(embed=embed)
+
+        template_path = os.path.join(self.cfgs_dir, f'{interaction.user.id}.cfg')
+        if not os.path.exists(template_path):
+            embed = discord.Embed(title="`❓` **Missing Template**", description=f"It seems like you're missing your config template file in our database, make sure to use `/upload [file]`. We will use the default template for this generation!", color=0xFF474C)
+            embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
+            await interaction.followup.send(embed=embed, ephemeral=True)
 
         self.log_config("free", False)
                 

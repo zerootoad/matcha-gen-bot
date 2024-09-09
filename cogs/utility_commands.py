@@ -18,6 +18,8 @@ class ExtraUtilities(commands.Cog):
     @commands.slash_command(name="information", description="View generation or feedback statistics.")
     @discord.option("about", str, description="Choose what you wanna view information about. (Default: Both)", choices=["Generation", "Feedback", "Both"])
     async def information(self, interaction, about: str = "Both"):
+
+        
         if not interaction.user.guild_permissions.administrator:
             embed = discord.Embed(title="`❌` **Not Eligible**", description=f"You do not have access to use this command.", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
@@ -54,7 +56,7 @@ class ExtraUtilities(commands.Cog):
             total_paid_generations = log_data.get("paid", 0)
             total_free_generations = log_data.get("free", 0)
             ai_generations = log_data.get("ai", 0)
-            math_generations = log_data.get("math", 0)
+            math_generations = log_data.get("math", 0) - total_free_generations
 
         if about in ["Both", "Feedback"]:
             for config_name, feedbacks in feedback_data.items():
@@ -82,7 +84,7 @@ class ExtraUtilities(commands.Cog):
         if about == "Generation":
             embed = discord.Embed(title=f"`📊` **Generation Statistics**", color=0x88CFF8)
             embed.add_field(name="Total Generations", value=f"{total_generations}", inline=False)
-            embed.add_field(name=f"Paid Generations: {total_paid_generations}", value=f"> AI Generations: {ai_generations}\n> Math Generations: {math_generations-total_free_generations}", inline=False)
+            embed.add_field(name=f"Paid Generations: {total_paid_generations}", value=f"> AI Generations: {ai_generations}\n> Math Generations: {math_generations}", inline=False)
             embed.add_field(name=f"Free Generations", value=f"{total_free_generations}", inline=True)
             
             await interaction.respond(embed=embed)
@@ -120,6 +122,8 @@ class ExtraUtilities(commands.Cog):
     @discord.slash_command(name="upload", description="Upload your configuration as .cfg template!")
     @discord.option("file", discord.Attachment, description="Attach your .cfg file here. Drag-n-Drop or browse and pick for the .cfg file.")
     async def upload(self, interaction, file: discord.Attachment):
+
+        
         if not file.filename.endswith(".cfg"):
             embed = discord.Embed(title="`❌` **Invalid Format**", description=f"Make sure to upload a .cfg file", color=0xFF474C)
             embed.set_footer(icon_url="https://i.ibb.co/JnnDpM5/9aa62f3dcfaa4fab6c445d846bb13a6c.webp", text=interaction.user.display_name)
