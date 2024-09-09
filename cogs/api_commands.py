@@ -141,7 +141,7 @@ class ApiUtilities(commands.Cog):
     @discord.option("ai", bool, description="Set to true if you would like to use the new AI feature. (Default: False)")
     @discord.option("model", str, description="Choose your preferred ai model. (Default: Stable)", choices=["Pre-Relase", "Stable"])
     async def paid_config(self, interaction, config_name: Optional[str] = None, ping: Optional[int] = None, ping_range: Optional[str] = None, mode: str = "None", ai: Optional[bool] = False, model: str = "Stable"):
-
+        model = "Rage" if model == "Stable" else "Legit"
         
         if interaction.guild.get_role(1278945247325327424) not in interaction.user.roles:
             embed = discord.Embed(title="`❌` **Not Eligible**", description=f"You do not have access to use the paid generator, please use `/free-config` instead.", color=0xFF474C)
