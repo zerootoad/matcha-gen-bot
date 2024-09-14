@@ -1,7 +1,7 @@
 ***know theres a bug where it takes too long to respond and it bricks the bot up for a minute or less***
 
 requirements:
-- python installed and added to path
+- python 3.9+ installed and added to path
 - some python knowledge
 
 for installation just open the `settings/config.json` change the values with your own then open the cogs folder in `api_commands.py` change the role id and channel id
